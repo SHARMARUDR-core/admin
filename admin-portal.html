@@ -1,0 +1,100 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="input.css">
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="https://i.pinimg.com/236x/af/db/47/afdb47496be41382b92c7a3bc5024710.jpg" type="image/x-icon">
+</head>
+<body class="flex max-w-2xl	 h-screen flex-col gap-2 p-2" > 
+
+    <h1 class="text-4xl text-slate-800 flex justify-center items-center">Admin</h1>
+    <hr>
+    <h2 class="text-black text-2xl">Add item</h2>
+    <form action="/items"  method="POST" id ='form' class="flex gap-2 flex-col">
+        <input class="border" name = 'name' type="text" placeholder="name" value=''  required>
+        <input class="border" name = 'price' type='number' placeholder="price" value='' required>
+        <input class="border" name = 'url' type="text" placeholder="url" value="" required>
+        <input class="border" name="typeOf" type="text" placeholder="veg/NonVeg" value="" required>
+        <input class="border" name = 'description' type="text" placeholder="description" value="" required>
+        <button class="bg-red-500" onclick="handleSubmit()">submit</button>
+    </form>
+
+    <hr>
+    <h2 class="text-black text-2xl">Remove item</h2>
+    <form action="/items" method="POST" id  = 'form-remove' class="flex gap-1 flex-col">
+        <input class="border" type="text" placeholder="name of an item" value="" name="name">
+        <button onclick="Remove()" class="bg-red-500"> Remove </button> 
+    </form>
+
+    <script>
+        
+        document.getElementById('form-remove').addEventListener('click' , function(e) {
+            e.preventDefault()
+        })
+        const form_remove = document.getElementById('form-remove')
+/////////                     Removing item
+function Remove() {
+    const formData = new FormData(form_remove);    
+    const data = {};    
+    for (const [key, value] of formData.entries()) {
+        data[key] = value; // Storing key-value pairs properly
+    }
+    
+    // Send the name as part of the URL
+    fetch(`https://new-api2-1.vercel.app/?vercelToolbarCode=OKjObIVIeg8Ka-m`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(res => res.json())  // Assuming server responds with JSOn
+    .then(response => console.log(response.message))  // Handle the response
+    .catch(err => console.error('Error:', err));  // Catch errors properly
+}
+
+/////////                   adding item 
+        function handleSubmit() {
+            document.getElementById('form').addEventListener('click' , function(e) {
+                e.preventDefault()
+            })
+        const form = document.getElementById('form')
+
+            const formData = new FormData(form);    
+            const data = {};    
+
+            // Iterate over form data and build the object
+            for (const [key, value] of formData.entries()) {
+                if (value.length < 1) {alert('please add some data in fields') ;  return  }
+                data[key] = value; // Storing key-value pairs properly
+            }
+            
+            console.log(data)
+            alert(`${data.name} has been added to our data base`)
+            // Fetch request to send form data
+            fetch('https://new-api2-1.vercel.app/?vercelToolbarCode=OKjObIVIeg8Ka-m', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: data.name, 
+                    price: data.price, 
+                    url: data.url ,
+                    typeOf : data.typeOf ,
+                    description : data.description
+                }), 
+            })
+            .then(res => res.text())
+            .then(e => console.log(e))
+            .catch(err => console.log(err)); // Catching errors properly
+        }
+
+////////                           json file of items
+        fetch('https://new-api2-1.vercel.app/?vercelToolbarCode=OKjObIVIeg8Ka-m')
+        .then((res) => res.json())
+        .then(console.log)
+    </script>
+</body>
+</html>
